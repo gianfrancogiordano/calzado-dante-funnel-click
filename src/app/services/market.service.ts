@@ -16,6 +16,41 @@ const pixel = environment.pixel;
 })
 export class MarketService {
 
+  public producto: any = {
+    editar: false,
+    title: '',
+    descripcion: '',
+    extraimages: [],
+    images: [],
+    position: null,
+    precio: null,
+    preciomayor: null,
+    descuento: null,
+    descuentomayor: null,
+    activo: true,
+    configuracion: {
+      size: [],
+      colors: []
+    },
+    variacion: [],
+    referencias: [],
+    inventario: {
+      sku: '',
+      idfabrica: '',
+      idbarras: '',
+      pesokg: null,
+      stock: null,
+      alarma_stock: null,
+      gestionarstock: false
+    },
+    costo: null,
+    clickcount: null,
+    showdetal: true,
+    showmayor: true,
+    categoria: '',
+    categories: []
+  }
+
   public clientIp: string = '';
   public initPixel: boolean = false;
 
