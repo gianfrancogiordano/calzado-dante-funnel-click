@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 
 const apiToken = environment.apiFB;
 const pixel = environment.pixel;
+const negocio = environment.clickstoreId;
 
 declare let fbq: Function;
 
@@ -97,9 +98,11 @@ export class CartFormComponent implements OnInit {
     private fb: FormBuilder) {
 
       this.marketService.trackPixel('PageView');
+      this.marketService.analyticsUpsert(negocio, 'pageview').subscribe();
 
       this.sendAddToCart = this.formClienteData.controls['variacion2'].valueChanges.subscribe( (change: any) => {
         this.marketService.trackPixel('AddToCart', this.producto);
+        this.marketService.analyticsUpsert(negocio, 'agregaralcarrito').subscribe();
         this.sendAddToCart.unsubscribe();
       });
 
@@ -272,6 +275,7 @@ export class CartFormComponent implements OnInit {
   pedidoHandler(v: any, pedido: any) {
     // Pixel
     this.trackPixelPurchase(pixel, apiToken, (v.valorTotal - v.descuentoTotal), 'Purchase');
+    this.marketService.analyticsUpsert(negocio, 'comprar').subscribe();
 
     this.submitPedido = false;
     this.submitPedidoValidator = false;
@@ -295,6 +299,7 @@ export class CartFormComponent implements OnInit {
   doFilterlOnScroll($event: any) {
     if ((window.scrollY > Math.ceil(document.body.offsetHeight * 0.3)) && !this.sendViewContent) {
       this.marketService.trackPixel('ViewContent', this.producto);
+      this.marketService.analyticsUpsert(negocio, 'vercontenido').subscribe();
       this.sendViewContent = true;
     }
   }

@@ -34,22 +34,14 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.idPedido = params['id'];
-
-      console.log(this.idPedido);
-
       this.getPedido();
-
     });
   }
 
   getPedido() {
-
     this.marketService.getPedido(this.idPedido)
         .subscribe({
-          next: (v) => { 
-            this.pedido = v;
-            console.log(v);
-          },
+          next: (v) => {  this.pedido = v; },
           error: (e) => { console.log(e); }
         })
   }

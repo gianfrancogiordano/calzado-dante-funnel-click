@@ -116,6 +116,11 @@ export class MarketService {
       );
   }
 
+  analyticsUpsert(negocio: string, action: string) {
+    return this.http.put(`${base_url}/analytics/${negocio}?action=${action}`, this.headers)
+      .pipe(map((resp: any) => resp.body ))
+  }
+
   trackPixel(action: string, producto?: any) {
 
     if (!this.initPixel) {
