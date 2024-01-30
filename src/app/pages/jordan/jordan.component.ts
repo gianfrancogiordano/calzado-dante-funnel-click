@@ -16,9 +16,9 @@ declare let fbq: Function;
 export class JordanComponent implements OnInit {
 
   
-  public imgProducto: string[] = ['assets/funnel-click-jordan/negro_negro.jpeg',
-                                  'assets/funnel-click-jordan/negro_rojo.jpeg',
-                                  'assets/funnel-click-jordan/blanco_negro.jpeg']
+  public imgProducto: string[] = ['../assets/funnel-click-jordan/negro_negro.jpeg',
+                                  '../assets/funnel-click-jordan/negro_rojo.jpeg',
+                                  '../assets/funnel-click-jordan/blanco_negro.jpeg']
 
   public variacionImg: any = null;
   public variacion1: any = null;
@@ -246,8 +246,6 @@ export class JordanComponent implements OnInit {
         }
 
         console.log(pedido);
-
-
   }
 
 }
