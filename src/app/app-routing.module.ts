@@ -5,8 +5,8 @@ import { BotasMujerComponent } from './pages/botas-mujer/botas-mujer.component';
 import { CartComponent } from './cart/cart.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/jordan', pathMatch: 'full' },
-  { path: 'jordan', component: JordanComponent },
+  { path: '', redirectTo: '/botas-jordan-hombre', pathMatch: 'full' },
+  { path: 'botas-jordan-hombre', component: JordanComponent },
   { path: 'botas-mujer', component: BotasMujerComponent },
   { path: 'cart/:id', component: CartComponent },
   { path: '**', component: JordanComponent }
