@@ -1,4 +1,5 @@
-<div class="container-fluid text-center">
+<!-- Inicio de landing -->
+<div class="container text-center">
     <div class="row">
         <div class="col-12">
             <img class="img-fluid" src="assets/funnel-click-jordan/img1.gif" alt="">
@@ -55,10 +56,10 @@
     </div>
 
 </div>
-
+<!-- Fin de landing -->
 <!-- Inicio de carrito y formulario -->
+<div class="container mt-1">
 
-<div class="container">
     <div class="row" [formGroup]="formClienteData">
         <div class="col-12 mb-1 mt-3">
 
@@ -103,9 +104,7 @@
 
         </div>
     </div>
-</div>
 
-<div class="container-fluid mt-1">
     <div class="row">
         <div class="col-12">
 
@@ -210,7 +209,7 @@
         </div>
 
         <div class="col-12 mt-5">
-            <div class="d-grid gap-2">
+            <div class="d-grid">
 
                 <button *ngIf="!submitPedido" (click)="createPurchase()" type="button"
                         class="btn btn-lg btn-success animate__animated animate__pulse animate__slow animate__infinite"> Confirmar Pedido</button>
@@ -228,12 +227,10 @@
             <span>100% GARANTIZADOS</span>
         </div>
     </div>
-</div>
-
-<div class="row mb-5 mt-3">
-    <div class="col-12 text-center mt-3">
-        <img class="img-fluid img-logo" src="https://d3cj1y2eynyat2.cloudfront.net/logo/16bb9eb5-9689-4db1-97ef-1caf42b5af09.jpg" alt="" srcset="">
+    <div class="row mb-5 mt-3">
+        <div class="col-12 text-center mt-3">
+            <img class="img-fluid img-logo" src="https://d3cj1y2eynyat2.cloudfront.net/logo/16bb9eb5-9689-4db1-97ef-1caf42b5af09.jpg" alt="" srcset="">
+        </div>
     </div>
 </div>
-
 <!-- Fin de carrito y formulario -->

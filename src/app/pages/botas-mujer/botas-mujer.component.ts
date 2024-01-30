@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MarketService } from 'src/app/services/market.service';
 import ObjectID from 'bson-objectid';
@@ -7,6 +7,7 @@ import { FbApiConversionService } from 'src/app/services/fb-api-conversion.servi
 import Swal from 'sweetalert2';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 declare let fbq: Function;
 
@@ -20,10 +21,21 @@ const pixel = environment.pixel;
 })
 export class BotasMujerComponent implements OnInit {
 
+  public clickstoreProducto: any = {
+    id: '65b0752826e80d0791f762ca',
+    title: 'BOTAS MUJER',
+    categoria: 'Botas',
+    precio: 153400,
+    descuento: 120000
+  }
+
   public variacionImg: any = 0;
   public wsnumber: string = '573223020415';
   public submitPedidoValidator: boolean = false;
   public submitPedido: boolean = false;
+  
+  public sendAddToCart: Subscription;
+  public sendViewContent: boolean = false;
 
   public formClienteData = this.fb.group({
     variacion1: ['', [Validators.required]],
@@ -38,14 +50,6 @@ export class BotasMujerComponent implements OnInit {
     codigo: ['57', [Validators.required]],
     pago: ['CONTRAENTREGA']
   });
-
-  public clickstoreProducto: any = {
-    id: '65b0752826e80d0791f762ca',
-    title: 'Botas Dama',
-    categoria: 'Botas',
-    precio: 153400,
-    descuento: 120000
-  }
 
   public producto: any = {
     editar: false,
@@ -86,13 +90,19 @@ export class BotasMujerComponent implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private fbApiConv: FbApiConversionService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder) {
+      this.getProducto();
 
-  ngOnInit(): void {
-    this.getProducto();
-    this.marketService.trackPixel('PageView');
-    this.marketService.trackPixel('ViewContent', this.producto);
-  }
+      this.marketService.trackPixel('PageView');
+
+      this.sendAddToCart = this.formClienteData.controls['variacion2'].valueChanges.subscribe( (change: any) => {
+        this.marketService.trackPixel('AddToCart', this.producto);
+        this.sendAddToCart.unsubscribe();
+      });
+
+    }
+
+  ngOnInit(): void { }
 
   setImg(imgName: number) { this.variacionImg = imgName; }
 
@@ -145,7 +155,10 @@ export class BotasMujerComponent implements OnInit {
 
         console.log('FbApi', action, allData);
 
-        this.fbApiConv.sendFbApiEvent(allData).subscribe(() => console.log('FbApi', action));
+        this.fbApiConv.sendFbApiEvent(allData).subscribe({
+          next: (v) => { console.log('FbApi', action); },
+          error: (e) => { console.log(e) }
+        });
 
       } else {
 
@@ -166,7 +179,10 @@ export class BotasMujerComponent implements OnInit {
 
               console.log('FbApi', action, allData);
 
-              this.fbApiConv.sendFbApiEvent(allData).subscribe(() => console.log('FbApi', action));
+              this.fbApiConv.sendFbApiEvent(allData).subscribe({
+                next: (v) => { console.log('FbApi', action); },
+                error: (e) => { console.log(e) }
+              });
 
             }
           })
@@ -258,8 +274,6 @@ export class BotasMujerComponent implements OnInit {
   }
 
   pedidoHandler(v: any, pedido: any) {
-    console.log(v);
-
     // Pixel
     this.trackPixelPurchase(pixel, apiToken, (v.valorTotal - v.descuentoTotal), 'Purchase');
 
@@ -279,6 +293,14 @@ export class BotasMujerComponent implements OnInit {
     const stringWhatsapp = `Hola! Hice un pedido y quiero cambiarlo`;
     const linkApi = `https://api.whatsapp.com/send?phone=${this.wsnumber}&text=${encodeURIComponent(stringWhatsapp)}`;
     window.open(linkApi, '_blank');
+  }
+
+  @HostListener("window:scroll", ['$event'])
+  doFilterlOnScroll($event: any) {
+    if ((window.scrollY > Math.ceil(document.body.offsetHeight * 0.3)) && !this.sendViewContent) {
+      this.marketService.trackPixel('ViewContent', this.producto);
+      this.sendViewContent = true;
+    }
   }
 
 }

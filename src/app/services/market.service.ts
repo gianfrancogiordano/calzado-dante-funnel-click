@@ -118,7 +118,10 @@ export class MarketService {
       if ( this.clientIp !== '' ) {
         
         const allData = { pixel, apiToken, dataMeta, action, _eventId, clientData: { domain: document.location.href, _fbp, _fbc, ip: this.clientIp } };
-        this.fbApiConv.sendFbApiEvent(allData).subscribe();
+        this.fbApiConv.sendFbApiEvent(allData).subscribe({
+          next: (v) => { console.log('FbApi', action); },
+          error: (e) => { console.log(e) }
+        });
 
       } else {
 
@@ -126,7 +129,10 @@ export class MarketService {
           next: (resp: any) => {
             this.clientIp = resp.ip;
             const allData = { pixel, apiToken, dataMeta, action, _eventId, clientData: { domain: document.location.href, _fbp, _fbc, ip: this.clientIp } };
-            this.fbApiConv.sendFbApiEvent(allData).subscribe();
+            this.fbApiConv.sendFbApiEvent(allData).subscribe({
+              next: (v) => { console.log('FbApi', action); },
+              error: (e) => { console.log(e) }
+            });
           }
         });
       }
