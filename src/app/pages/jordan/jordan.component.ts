@@ -5,6 +5,11 @@ import ObjectID from 'bson-objectid';
 import { CookieService } from 'ngx-cookie-service';
 import { FbApiConversionService } from 'src/app/services/fb-api-conversion.service';
 import Swal from 'sweetalert2';
+import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
+
+const apiToken = environment.apiFB;
+const pixel = environment.pixel;
 
 declare let fbq: Function;
 
@@ -15,13 +20,14 @@ declare let fbq: Function;
 })
 export class JordanComponent implements OnInit {
 
-  public variacionImg: any = null;
-  public variacion1: any = null;
-  public variacion2: any = null;
-
+  public variacionImg: any = 0;
+  public wsnumber: string = '573223020415';
   public submitPedidoValidator: boolean = false;
+  public submitPedido: boolean = false;
 
   public formClienteData = this.fb.group({
+    variacion1: ['', [Validators.required]],
+    variacion2: ['', [Validators.required]],
     nombre: ['', [Validators.required]],
     direccion: ['', [Validators.required]],
     departamento: ['', [Validators.required]],
@@ -30,7 +36,7 @@ export class JordanComponent implements OnInit {
     telefono: ['', [Validators.required, Validators.pattern(/^(\s?\d)*\s?$/), Validators.minLength(5)]],
     email: ['', Validators.required],
     codigo: ['57', [Validators.required]],
-    pago: ['CONTRAENTREGA'],
+    pago: ['CONTRAENTREGA']
   });
 
   public clickstoreProducto: any = {
@@ -77,9 +83,10 @@ export class JordanComponent implements OnInit {
   }
 
   constructor(private marketService: MarketService,
-              private cookieService: CookieService,
-              private fbApiConv: FbApiConversionService,
-              private fb: FormBuilder) {  }
+    private router: Router,
+    private cookieService: CookieService,
+    private fbApiConv: FbApiConversionService,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.getProducto();
@@ -91,7 +98,7 @@ export class JordanComponent implements OnInit {
 
   getProducto() {
     this.marketService.getProduct(this.clickstoreProducto.id)
-        .subscribe({ next: (v) => { this.producto = v.producto; } })
+      .subscribe({ next: (v) => { this.producto = v.producto; } })
   }
 
   campoNoValido(campo: string): boolean {
@@ -125,7 +132,7 @@ export class JordanComponent implements OnInit {
       const _fbp = this.cookieService.get('_fbp');
       const _fbc = this.cookieService.get('_fbc');
 
-      if ( this.marketService.clientIp !== '' ) {
+      if (this.marketService.clientIp !== '') {
 
         const allData = {
           pixel,
@@ -135,34 +142,34 @@ export class JordanComponent implements OnInit {
           _eventId,
           clientData: { email: datosCliente.email, codigo: datosCliente.codigo, telefono: `${datosCliente.telefono.trim().replace(/\s+/g, '')}`, domain: document.location.href, _fbp, _fbc, ip: this.marketService.clientIp }
         };
-  
+
         console.log('FbApi', action, allData);
-  
+
         this.fbApiConv.sendFbApiEvent(allData).subscribe(() => console.log('FbApi', action));
 
       } else {
 
         this.marketService.buscarIp()
-            .subscribe({
-              next: (resp: any) => {
+          .subscribe({
+            next: (resp: any) => {
 
-                this.marketService.clientIp = resp.ip;
+              this.marketService.clientIp = resp.ip;
 
-                const allData = {
-                  pixel,
-                  apiToken,
-                  dataMeta,
-                  action,
-                  _eventId,
-                  clientData: { email: datosCliente.email, codigo: datosCliente.codigo, telefono: `${datosCliente.telefono.trim().replace(/\s+/g, '')}`, domain: document.location.href, _fbp, _fbc, ip: this.marketService.clientIp }
-                };
-          
-                console.log('FbApi', action, allData);
-          
-                this.fbApiConv.sendFbApiEvent(allData).subscribe(() => console.log('FbApi', action));
+              const allData = {
+                pixel,
+                apiToken,
+                dataMeta,
+                action,
+                _eventId,
+                clientData: { email: datosCliente.email, codigo: datosCliente.codigo, telefono: `${datosCliente.telefono.trim().replace(/\s+/g, '')}`, domain: document.location.href, _fbp, _fbc, ip: this.marketService.clientIp }
+              };
 
-              }
-            })
+              console.log('FbApi', action, allData);
+
+              this.fbApiConv.sendFbApiEvent(allData).subscribe(() => console.log('FbApi', action));
+
+            }
+          })
       }
 
     }
@@ -186,61 +193,92 @@ export class JordanComponent implements OnInit {
       precio: this.clickstoreProducto.descuento,
       precioTotal: this.clickstoreProducto.descuento,
       costo: this.producto.costo,
-      variacion1: this.variacion1, // PENDIENTE EN NUEVO PEDIDO
-      variacion2: this.variacion2, // PENDIENTE EN NUEVO PEDIDO
+      variacion1: this.formClienteData.get('variacion1')?.value, // PENDIENTE EN NUEVO PEDIDO
+      variacion2: this.formClienteData.get('variacion2')?.value, // PENDIENTE EN NUEVO PEDIDO
       title: this.producto.title,
       stock: 0,
       gestionarstock: this.producto.inventario.gestionarstock,
-      img: this.producto.images[0]
+      img: this.producto.images[this.variacionImg]
     }
 
   }
 
   createPurchase() {
 
-        // Si el formulario es invalido
-        this.submitPedidoValidator = true;
-        if (this.formClienteData.invalid) {
-    
-          Swal.fire({
-            title: 'Upps ...',
-            text: `Falta llenar campos obligatorios`,
-            icon: 'error',
-            confirmButtonText: 'Entiendo ...',
-            confirmButtonColor: '#398bf7',
-          });
-    
-          return;
-        }
+    // Si el formulario es invalido
+    this.submitPedidoValidator = true;
+    if (this.formClienteData.invalid) {
 
-        const datosCliente: any = this.formClienteData.value
-        const pedido = {
-          cliente: {
-            nombre: datosCliente.nombre,
-            direccion: `${datosCliente.direccion}, ${datosCliente.ciudad}`,
-            codigo: datosCliente.codigo,
-            telefono: `${datosCliente.telefono.trim().replace(/\s+/g, '')}`,
-            documento: datosCliente.documento,
-            email: datosCliente.email
-          },
-          articulos: [this.addToShoppingCart()],
-          store: 'E-COMMERCE',
-          tipoVenta: 'DETAL',
-          plataformaPago: 'WHATSAPP',
-          pago: 'CONTRA ENTREGA',
-          estado: 'EN PROCESO',
-          descuentoTotal: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
-          descuentoPedido: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
-          valorTotal: this.clickstoreProducto.descuento,
-          utilidadTotal: 0,
-          negocio: this.producto.negocio,
-          wsnumber: '',
-          lbsedes: [],
-          loadBalancer: false,
-          fbclid: this.checkFbClid()
-        }
+      Swal.fire({
+        title: 'Upps ...',
+        text: `Falta llenar campos obligatorios`,
+        icon: 'error',
+        confirmButtonText: 'Entiendo ...',
+        confirmButtonColor: '#398bf7',
+      });
 
-        console.log(pedido);
+      return;
+    }
+
+    const datosCliente: any = this.formClienteData.value
+    const pedido = {
+      cliente: {
+        nombre: datosCliente.nombre,
+        direccion: `${datosCliente.direccion} ${datosCliente.barrio}, ${datosCliente.ciudad} - ${datosCliente.departamento}`,
+        codigo: datosCliente.codigo,
+        telefono: `${datosCliente.telefono.trim().replace(/\s+/g, '')}`,
+        documento: datosCliente.documento,
+        email: datosCliente.email
+      },
+      articulos: [this.addToShoppingCart()],
+      store: 'E-COMMERCE',
+      tipoVenta: 'DETAL',
+      plataformaPago: 'WHATSAPP',
+      pago: 'CONTRA ENTREGA',
+      estado: 'EN PROCESO',
+      descuentoTotal: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
+      descuentoPedido: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
+      valorTotal: this.clickstoreProducto.precio,
+      utilidadTotal: 0,
+      negocio: this.producto.negocio,
+      wsnumber: this.wsnumber,
+      lbsedes: [],
+      loadBalancer: false,
+      fbclid: this.checkFbClid()
+    }
+
+
+    this.submitPedido = true;
+    this.marketService.nuevoPedido(pedido)
+      .subscribe({
+        next: (v) => this.pedidoHandler(v, pedido),
+        error: (e) => this.stockErrorHandler(e, pedido)
+      });
+
+  }
+
+  pedidoHandler(v: any, pedido: any) {
+    console.log(v);
+
+    // Pixel
+    this.trackPixelPurchase(pixel, apiToken, (v.valorTotal - v.descuentoTotal), 'Purchase');
+
+    this.submitPedido = false;
+    this.submitPedidoValidator = false;
+
+    // Cambiamos a la siguiente etapa (Validación de pedido)
+    this.router.navigateByUrl(`cart/${v._id}`);
+
+  }
+
+  stockErrorHandler(e: any, pedido: any) {
+    console.log(e);
+  }
+
+  help() {
+    const stringWhatsapp = `Hola! Hice un pedido y quiero cambiarlo`;
+    const linkApi = `https://api.whatsapp.com/send?phone=${this.wsnumber}&text=${encodeURIComponent(stringWhatsapp)}`;
+    window.open(linkApi, '_blank');
   }
 
 }

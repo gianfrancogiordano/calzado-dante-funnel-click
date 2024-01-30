@@ -68,6 +68,10 @@ export class MarketService {
       )
   }
 
+  getPedido(idPedido: string) {
+    return this.http.get(`${base_url}/pedidos/${idPedido}`).pipe( map((resp: any) => resp.body) )
+  }
+
   buscarIp() { return this.http.get(`https://api.ipify.org/?format=json`); }
 
   nuevoPedido(campos: any) {
