@@ -8,13 +8,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { JordanComponent } from './pages/jordan/jordan.component';
 import { BotasMujerComponent } from './pages/botas-mujer/botas-mujer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ImagenPipe } from './pipes/imagen.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     CartComponent,
     JordanComponent,
-    BotasMujerComponent
+    BotasMujerComponent,
+    ImagenPipe
   ],
   imports: [
     FormsModule,
