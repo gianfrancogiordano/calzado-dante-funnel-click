@@ -9,6 +9,7 @@ import { MarketService } from '../services/market.service';
 })
 export class CartComponent implements OnInit {
 
+  public wsnumber: string = '';
   public idPedido: string = '';
   public pedido: any = {
     cliente: {
@@ -41,9 +42,18 @@ export class CartComponent implements OnInit {
   getPedido() {
     this.marketService.getPedido(this.idPedido)
         .subscribe({
-          next: (v) => {  this.pedido = v; },
+          next: (v) => {  
+            this.pedido = v;
+            this.wsnumber = v.wsnumber;
+          },
           error: (e) => { console.log(e); }
         })
+  }
+
+  help() {
+    const stringWhatsapp = `Hola! Hice un pedido y quiero cambiarlo`;
+    const linkApi = `https://api.whatsapp.com/send?phone=${this.wsnumber}&text=${encodeURIComponent(stringWhatsapp)}`;
+    window.open(linkApi, '_blank');
   }
 
 }

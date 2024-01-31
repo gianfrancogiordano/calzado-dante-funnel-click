@@ -1,6 +1,12 @@
 <!-- Inicio de carrito y formulario -->
 <div class="container mt-1">
 
+    <div class="row mt-1">
+        <div class="col-12">
+            <img class="img-fluid" src="assets/funnel-click-jordan/3.gif" alt="">
+        </div>
+    </div>
+
     <div class="row" [formGroup]="formClienteData">
         <div class="col-12 mb-1 mt-3">
 
@@ -73,7 +79,7 @@
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Teléfono <span class="text-danger">*</span></label>
                     <input type="text" [ngClass]="{'invalid': campoNoValido('telefono')}" formControlName="telefono" class="form-control" id="exampleFormControlInput1">
-                    <div *ngIf="campoNoValido('telefono')" class="small text-danger">Por favor escribe tu teléfono</div>
+                    <div *ngIf="campoNoValido('telefono')" class="small text-danger">Por favor escribe tu teléfono, solo se permiten números</div>
                 </div>
     
                 <div class="mb-3">
@@ -131,8 +137,8 @@
                         </td>
                         <td>
                             <div class="product-price">
-                                <span class="old-price">{{ clickstoreProducto.precio | currency:'$':'symbol':'1.0' }}</span>
-                                <span class="font-weight-bold">{{ clickstoreProducto.descuento | currency:'$':'symbol':'1.0' }}</span>
+                                <span class="old-price">{{ producto.precio | currency:'$':'symbol':'1.0' }}</span>
+                                <span class="font-weight-bold">{{ calcularPrecioDescuento(producto) | currency:'$':'symbol':'1.0' }}</span>
                             </div>
                         </td>
                     </tr>
@@ -141,7 +147,7 @@
                     <tr>
                         <th colspan="2" class="text-center">Total a cancelar al recibir</th>
                         <td>
-                            <span class="font-weight-bold">{{ clickstoreProducto.descuento | currency:'$':'symbol':'1.0' }}</span>
+                            <span class="font-weight-bold">{{ calcularPrecioDescuento(producto) | currency:'$':'symbol':'1.0' }}</span>
                         </td>
                     </tr>
                 </tfoot>

@@ -11,6 +11,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ImagenPipe } from './pipes/imagen.pipe';
 import { CartFormComponent } from './core/cart-form/cart-form.component';
 import { FooterComponent } from './core/footer/footer.component';
+import { BotasMujer3Component } from './pages/botas-mujer3/botas-mujer3.component';
+import { BotasMujer2Component } from './pages/botas-mujer2/botas-mujer2.component';
+import { BotasMujer1Component } from './pages/botas-mujer1/botas-mujer1.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { FooterComponent } from './core/footer/footer.component';
     BotasMujerComponent,
     ImagenPipe,
     CartFormComponent,
-    FooterComponent
+    FooterComponent,
+    BotasMujer3Component,
+    BotasMujer2Component,
+    BotasMujer1Component
   ],
   imports: [
     FormsModule,

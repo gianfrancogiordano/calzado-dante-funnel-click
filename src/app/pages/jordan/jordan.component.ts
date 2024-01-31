@@ -24,7 +24,9 @@ export class JordanComponent implements OnInit {
 
   getProducto() {
     this.marketService.getProduct(this.clickstoreProducto.id)
-      .subscribe({ next: (v) => { this.marketService.producto = v.producto; } })
+      .subscribe({ next: (v) => { 
+        this.marketService.producto = v.producto;
+      } })
   }
 
 }

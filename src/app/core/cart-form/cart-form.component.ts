@@ -23,13 +23,7 @@ declare let fbq: Function;
 export class CartFormComponent implements OnInit {
 
   @Input()
-  public clickstoreProducto: any = {
-    id: '',
-    title: '',
-    categoria: '',
-    precio: 0,
-    descuento: 0
-  }
+  public clickstoreProducto: any = { id: '' }
 
   @Input()
   public wsnumber: string = '';
@@ -195,6 +189,14 @@ export class CartFormComponent implements OnInit {
 
   checkFbClid(): boolean { return (this.cookieService.get('_fbc') === '') ? false : true; }
 
+  calcularPrecioDescuento(producto: any): number {
+    let precio: number = 0;
+    if (producto.descuento > 0) {
+      precio = Math.round((producto.precio - ((producto.descuento / 100) * producto.precio)));
+    } else { precio = producto.precio; }
+    return Number(precio);
+  }
+
   addToShoppingCart() {
     return {
       _id: this.producto._id,
@@ -206,8 +208,8 @@ export class CartFormComponent implements OnInit {
       idbarras: this.producto.inventario.idbarras,
       cantidad: 1,
       descripcion: this.producto.descripcion,
-      precio: this.clickstoreProducto.descuento,
-      precioTotal: this.clickstoreProducto.descuento,
+      precio: this.calcularPrecioDescuento(this.producto),
+      precioTotal: this.calcularPrecioDescuento(this.producto),
       costo: this.producto.costo,
       variacion1: this.formClienteData.get('variacion1')?.value, // PENDIENTE EN NUEVO PEDIDO
       variacion2: this.formClienteData.get('variacion2')?.value, // PENDIENTE EN NUEVO PEDIDO
@@ -251,9 +253,9 @@ export class CartFormComponent implements OnInit {
       plataformaPago: 'WHATSAPP',
       pago: 'CONTRA ENTREGA',
       estado: 'EN PROCESO',
-      descuentoTotal: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
-      descuentoPedido: this.clickstoreProducto.precio - this.clickstoreProducto.descuento,
-      valorTotal: this.clickstoreProducto.precio,
+      descuentoTotal: 0,
+      descuentoPedido: 0,
+      valorTotal: this.calcularPrecioDescuento(this.producto),
       utilidadTotal: 0,
       negocio: this.producto.negocio,
       wsnumber: this.wsnumber,
@@ -287,12 +289,6 @@ export class CartFormComponent implements OnInit {
 
   stockErrorHandler(e: any, pedido: any) {
     console.log(e);
-  }
-
-  help() {
-    const stringWhatsapp = `Hola! Hice un pedido y quiero cambiarlo`;
-    const linkApi = `https://api.whatsapp.com/send?phone=${this.wsnumber}&text=${encodeURIComponent(stringWhatsapp)}`;
-    window.open(linkApi, '_blank');
   }
 
   @HostListener("window:scroll", ['$event'])
