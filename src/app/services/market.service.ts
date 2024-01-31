@@ -48,7 +48,8 @@ export class MarketService {
     showdetal: true,
     showmayor: true,
     categoria: '',
-    categories: []
+    categories: [],
+    negocio: { logo: '', sedes: [] }
   }
 
   public clientIp: string = '';

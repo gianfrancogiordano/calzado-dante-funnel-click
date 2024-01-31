@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+.product-description {
+    white-space: normal;
+}
+
 .mb-120 {
     margin-bottom: 120px;
 }
